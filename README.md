@@ -7,40 +7,53 @@ with the [CallSite](http://github.com/visionmedia/callsite) information.
 To read more about runtime stack trace introspection you can refer to [this
 article](http://www.devthought.com/2011/12/22/a-string-is-not-an-error/#beyond).
 
-![](http://f.cl.ly/items/0r3t3i0P0D1w2K242p1U/Image%202012.03.26%2011:42:35%20AM.png)
+![](http://club.cnodejs.org/user_data/images/4efc278525fa69ac6900003e/4efc278525fa69ac6900003e1333196595688.png)
 
 ## How to use
 
 ```js
-require('console-trace')
+var myconsole = require('myconsole');
+myconsole.log('my information');
+myconsole.info('my information');
+myconsole.warn('my information');
+myconsole.error('my information');
 ```
 
-You can add the `t` or `trace` getter to your calls to obtain a stacktrace:
+* traceError
+
+Sometimes the err is not a `Error` instance but an object, `console.log(err.stack)` will fail, maybe you want 
+inspect this object.
 
 ```js
-console.t.log('a');
-console.trace.log('aaa');
+myconsole.traceError(new Error('error object'));
+myconsole.traceError({msg: 'error message'});
 ```
 
-You can also make every console call trace:
+* ifError
+
+Sometimes, callback function could be very simple, just an dummy function or log function.
 
 ```js
-console.traceAlways = true;
+User.save(user, myconsole.ifError);
 ```
 
-To disable colors completely, set the following:
+You can replace origin console
 
 ```js
-console.traceColors = false;
+require('myconsole').replace();
+console.log('replaced with myconsole');
 ```
 
-To customize the string that's prefixed to the calls, override the
-`console.traceFormat` function.
+and restore to origin console
 
-## Beyond console
-
-If you have more sophisticated logging needs, or don't wish to extend
-`console`, I suggest you look at [tracer](https://github.com/baryon/tracer).
+```JS
+require('myconsole').replace();
+console.log('replaced with myconsole');
+console.restore();
+console.log('restore to origin');
+console.replace();
+console.log('replaced with myconsole again');
+```
 
 ## License 
 
