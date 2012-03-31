@@ -66,11 +66,15 @@ exports.traceError = function(obj, stackPos) {
   }
 }
 
-exports.ifError = function(err) {
-  if(err) {
-    exports.traceError(err, 2);
+function ifErrorGetter() {
+  return function(err) {
+    if(err) {
+      exports.traceError(err, 3);
+    }
   }
 }
+
+exports.__defineGetter__('ifError', ifErrorGetter);
 
 /**
  * formatting function.
@@ -105,7 +109,7 @@ exports.replace = function() {
     console.error = exports.error
     console.dir = exports.dir
     console.traceError = exports.traceError
-    console.ifError = exports.ifError
+    console.__defineGetter__('ifError', ifErrorGetter);
   }
 
   function restore() {
