@@ -55,14 +55,14 @@ exports.error = function() {
 }
 
 exports.dir = function(obj) {
-  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, null, true) + '\n');
+  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, null, tty.isatty()) + '\n');
 }
 
 exports.traceError = function(obj, stackPos) {
   if(obj instanceof Error) {
     process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + obj.stack + '\n');
   } else {
-    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + util.inspect(obj, false, null, true) + '\n');
+    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + util.inspect(obj, false, null, tty.isatty()) + '\n');
   }
 }
 
