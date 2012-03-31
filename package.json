@@ -1,8 +1,8 @@
 {
-    "name": "console-trace"
+    "name": "myconsole"
   , "version": "0.1.0"
-  , "description": "Adds a handy `trace` flag to the console object to prepend the file and line number"
-  , "main": "./console-trace"
+  , "description": "replace the console object to prepend the file and line number, time, show in colors"
+  , "main": "./myconsole"
   , "dependencies": {
         "callsite": "*"
     }

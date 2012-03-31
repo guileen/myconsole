@@ -53,3 +53,30 @@ function getter () {
 
 console.__defineGetter__('t', getter);
 console.__defineGetter__('trace', getter);
+
+exports.replace = function() {
+  var originLog = console.log
+    , originInfo = console.info
+    , originWarn = console.warn
+    , originError = console.error
+    ;
+
+  function replace() {
+    console.log = console.t.log
+    console.info = console.t.info
+    console.warn = console.t.warn
+    console.error = console.trace.error
+  }
+
+  function restore() {
+    console.log = originLog
+    console.error = originError
+    console.warn = originWarn
+    console.info = originInfo
+  }
+
+  console.replace = exports.replace = replace;
+  console.restore = exports.restore = restore;
+
+  replace();
+}
