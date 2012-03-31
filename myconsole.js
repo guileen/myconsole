@@ -54,22 +54,36 @@ exports.error = function() {
   process.stderr.write(util.format.apply(this, arguments) + '\n');
 }
 
-exports.dir = function(obj) {
-  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, null, tty.isatty()) + '\n');
+exports.dir = function(obj, level) {
+  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, level, tty.isatty()) + '\n');
 }
 
-exports.traceError = function(obj, stackPos) {
+exports.traceError = function(obj) {
   if(obj instanceof Error) {
-    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + obj.stack + '\n');
+    process.stderr.write(traceFormat(__stack[1], styles.red) + obj.stack + '\n');
   } else {
-    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + util.inspect(obj, false, null, tty.isatty()) + '\n');
+    process.stderr.write(traceFormat(__stack[1], styles.red) + util.inspect(obj, false, null, tty.isatty()) + '\n');
   }
 }
 
 function ifErrorGetter() {
+  var call = __stack[1];
   return function(err) {
     if(err) {
-      exports.traceError(err, 3);
+      // uncomment to show stack
+      // process.stdout.write('myconsole-debug\n')
+      // process.stdout.write(__stack.map(function(c){return c && (c.getFileName() + ':' + c.getLineNumber()) || '<native>'}).join('\n'))
+      if(__stack.length < 2) {
+        var str = traceFormat(call, styles.red);
+      } else {
+        var str = 'callback at:' + traceFormat(call, styles.red) + '\nemit at:' + traceFormat(__stack[2], styles.yellow);
+      }
+      if(err instanceof Error) {
+        str += err.stack + '\n';
+      } else {
+        str += util.inspect(err, false, null, tty.isatty()) + '\n';
+      }
+      process.stderr.write(str);
     }
   }
 }
@@ -88,7 +102,9 @@ function traceFormat (call, style) {
   var basename = call.getFileName().replace(process.cwd() + '/', '')
     , str = '[' + basename + ':' + call.getLineNumber() + '] '
 
-  if (false === console.traceColors || tty.isatty()) {
+  if (false === exports.traceColors) {
+    return str;
+  } else if(exports.traceColors === true || tty.isatty()) {
     return style[0] + str + style[1];
   } else {
     return str;

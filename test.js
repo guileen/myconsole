@@ -1,4 +1,5 @@
 require('./myconsole').replace();
+var fs = require('fs')
 
 console.log('replace with myconsole');
 console.log('this is log');
@@ -10,11 +11,18 @@ console.traceError({msg: 'this is an object'});
 console.traceError(new Error('this is an error'));
 console.dir({obj: 'dir obj'})
 
-function doSomething(callback) {
-  callback(new Error('throw from callback'));
-}
+// this will error
+fs.mkdir('test.js', console.ifError);
 
-doSomething(console.ifError);
+// test ifError for EventEmitter
+var EventEmitter = require('events').EventEmitter;
+var emitter = new EventEmitter();
+
+emitter.on('error', console.ifError);
+
+var err = new Error('error from emitter');
+
+emitter.emit('error', err);
 
 console.restore();
 console.log('');
