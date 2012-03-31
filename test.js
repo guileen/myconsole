@@ -9,6 +9,12 @@ console.log('console.traceError')
 console.traceError({msg: 'this is an object'});
 console.traceError(new Error('this is an error'));
 
+function doSomething(callback) {
+  callback(new Error('throw from callback'));
+}
+
+doSomething(console.ifError);
+
 console.restore();
 console.log('');
 console.log('restore to origin console');

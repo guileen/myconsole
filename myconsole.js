@@ -53,14 +53,20 @@ exports.error = function() {
   process.stderr.write(util.format.apply(this, arguments) + '\n');
 }
 
-exports.traceError = function(obj) {
+exports.traceError = function(obj, stackPos) {
   var str;
   if(obj instanceof Error) {
     str = obj.stack;
   } else {
     str = util.inspect(obj, false, null, true);
   }
-  process.stderr.write(traceFormat(__stack[1], styles.red) + str + '\n');
+  process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + str + '\n');
+}
+
+exports.ifError = function(err) {
+  if(err) {
+    exports.traceError(err, 2);
+  }
 }
 
 /**
@@ -95,6 +101,7 @@ exports.replace = function() {
     console.warn = exports.warn
     console.error = exports.error
     console.traceError = exports.traceError
+    console.ifError = exports.ifError
   }
 
   function restore() {
