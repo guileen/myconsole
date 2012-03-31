@@ -1,29 +1,18 @@
-// visual pad
-console.log('');
-
-console.error(' regular console.error, no clue where it came from');
-
-// visual pad
-process.stdout.write(' ');
-
 require('./myconsole').replace();
 
-console.error('this is my console.error');
-
-// visual pad
-console.log('');
+console.log('replace with myconsole');
+console.log('this is log');
+console.info('this is info');
+console.warn('this is warn');
+console.error('this is error');
+console.log('console.traceError')
+console.traceError({msg: 'this is an object'});
+console.traceError(new Error('this is an error'));
 
 console.restore();
-
-console.log(' regular console.log, no clue where it came from');
-
-console.replace();
-
-// visual pad
-process.stdout.write(' ');
-
-console.log('this is my console.log');
-
-// pad
 console.log('');
-
+console.log('restore to origin console');
+console.log('this is log');
+console.info('this is info');
+console.warn('this is warn');
+console.error('this is error');

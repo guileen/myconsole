@@ -5,36 +5,78 @@
 
 var callsite = require('callsite')
   , tty = require('tty')
+  , util = require('util')
+  , origin = {}
+  ;
 
-/**
- * Overrides the console methods.
- */
+origin.log = console.log
+origin.info = console.info
+origin.warn = console.warn
+origin.error = console.error
 
-;['error', 'log', 'info', 'warn'].forEach(function (name) {
-  var fn = console[name];
-  console[name] = function () {
-    if (console._trace || console.traceAlways) {
-      arguments[0] = console.traceFormat(__stack[1], name) + arguments[0];
-    }
-    console._trace = false;
-    return fn.apply(this, arguments);
+var styles = {
+  //styles
+  'bold'      : ['\033[1m',  '\033[22m'],
+  'italic'    : ['\033[3m',  '\033[23m'],
+  'underline' : ['\033[4m',  '\033[24m'],
+  'inverse'   : ['\033[7m',  '\033[27m'],
+  //grayscale
+  'white'     : ['\033[37m', '\033[39m'],
+  'grey'      : ['\033[90m', '\033[39m'],
+  'black'     : ['\033[30m', '\033[39m'],
+  //colors
+  'blue'      : ['\033[34m', '\033[39m'],
+  'cyan'      : ['\033[36m', '\033[39m'],
+  'green'     : ['\033[32m', '\033[39m'],
+  'magenta'   : ['\033[35m', '\033[39m'],
+  'red'       : ['\033[31m', '\033[39m'],
+  'yellow'    : ['\033[33m', '\033[39m']
+};
+
+exports.log = function() {
+  arguments[0] = traceFormat(__stack[1], styles.grey) + arguments[0];
+  process.stdout.write(util.format.apply(this, arguments) + '\n');
+}
+
+exports.info = function() {
+  arguments[0] = traceFormat(__stack[1], styles.green) + arguments[0];
+  process.stdout.write(util.format.apply(this, arguments) + '\n');
+}
+
+exports.warn = function() {
+  arguments[0] = traceFormat(__stack[1], styles.yellow) + arguments[0];
+  process.stderr.write(util.format.apply(this, arguments) + '\n');
+}
+
+exports.error = function() {
+  arguments[0] = traceFormat(__stack[1], styles.red) + arguments[0];
+  process.stderr.write(util.format.apply(this, arguments) + '\n');
+}
+
+exports.traceError = function(obj) {
+  var str;
+  if(obj instanceof Error) {
+    str = obj.stack;
+  } else {
+    str = util.inspect(obj, false, null, true);
   }
-});
+  process.stderr.write(traceFormat(__stack[1], styles.red) + str + '\n');
+}
 
 /**
- * Overridable formatting function.
+ * formatting function.
  *
  * @param {CallSite}
  * @param {String} calling method
  * @api public
  */
 
-console.traceFormat = function (call, method) {
+function traceFormat (call, style) {
   var basename = call.getFileName().replace(process.cwd() + '/', '')
     , str = '[' + basename + ':' + call.getLineNumber() + '] '
 
   if (false === console.traceColors || tty.isatty()) {
-    return '\033[' + ('error' == method ? '91' : '90') + 'm' + str + '\033[39m';
+    return style[0] + str + style[1];
   } else {
     return str;
   }
@@ -45,34 +87,21 @@ console.traceFormat = function (call, method) {
  *
  * @api public
  */
-
-function getter () {
-  this._trace = true;
-  return this;
-}
-
-console.__defineGetter__('t', getter);
-console.__defineGetter__('trace', getter);
-
 exports.replace = function() {
-  var originLog = console.log
-    , originInfo = console.info
-    , originWarn = console.warn
-    , originError = console.error
-    ;
 
   function replace() {
-    console.log = console.t.log
-    console.info = console.t.info
-    console.warn = console.t.warn
-    console.error = console.trace.error
+    console.log = exports.log
+    console.info = exports.info
+    console.warn = exports.warn
+    console.error = exports.error
+    console.traceError = exports.traceError
   }
 
   function restore() {
-    console.log = originLog
-    console.error = originError
-    console.warn = originWarn
-    console.info = originInfo
+    console.log = origin.log
+    console.error = origin.error
+    console.warn = origin.warn
+    console.info = origin.info
   }
 
   console.replace = exports.replace = replace;
