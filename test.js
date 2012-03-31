@@ -8,6 +8,7 @@ console.error('this is error');
 console.log('console.traceError')
 console.traceError({msg: 'this is an object'});
 console.traceError(new Error('this is an error'));
+console.dir({obj: 'dir obj'})
 
 function doSomething(callback) {
   callback(new Error('throw from callback'));

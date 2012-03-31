@@ -13,6 +13,7 @@ origin.log = console.log
 origin.info = console.info
 origin.warn = console.warn
 origin.error = console.error
+origin.dir = console.dir
 
 var styles = {
   //styles
@@ -53,14 +54,16 @@ exports.error = function() {
   process.stderr.write(util.format.apply(this, arguments) + '\n');
 }
 
+exports.dir = function(obj) {
+  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, null, true) + '\n');
+}
+
 exports.traceError = function(obj, stackPos) {
-  var str;
   if(obj instanceof Error) {
-    str = obj.stack;
+    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + obj.stack + '\n');
   } else {
-    str = util.inspect(obj, false, null, true);
+    process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + util.inspect(obj, false, null, true) + '\n');
   }
-  process.stderr.write(traceFormat(__stack[stackPos || 1], styles.red) + str + '\n');
 }
 
 exports.ifError = function(err) {
@@ -100,6 +103,7 @@ exports.replace = function() {
     console.info = exports.info
     console.warn = exports.warn
     console.error = exports.error
+    console.dir = exports.dir
     console.traceError = exports.traceError
     console.ifError = exports.ifError
   }
@@ -109,6 +113,7 @@ exports.replace = function() {
     console.error = origin.error
     console.warn = origin.warn
     console.info = origin.info
+    console.dir = origin.dir
   }
 
   console.replace = exports.replace = replace;
