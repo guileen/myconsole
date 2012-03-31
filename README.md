@@ -1,5 +1,4 @@
-
-# console-trace
+# myconsole
 
 Extends the native Node.JS `console` object to prefix logging functions
 with the [CallSite](http://github.com/visionmedia/callsite) information.
