@@ -69,14 +69,16 @@ exports.traceError = function(obj) {
 function ifErrorGetter() {
   var call = __stack[1];
   return function(err) {
+    // uncomment to show stack
+    // process.stdout.write('\n----myconsole-debug--\n')
+    // process.stdout.write(__stack.map(function(c){return c && (c.getFileName() + ':' + c.getLineNumber()) || '<native>'}).join('\n'))
+    // process.stdout.write('\n')
     if(err) {
-      // uncomment to show stack
-      // process.stdout.write('myconsole-debug\n')
-      // process.stdout.write(__stack.map(function(c){return c && (c.getFileName() + ':' + c.getLineNumber()) || '<native>'}).join('\n'))
       if(__stack.length < 2) {
         var str = traceFormat(call, styles.red);
       } else {
-        var str = 'callback at:' + traceFormat(call, styles.red) + '\nemit at:' + traceFormat(__stack[2], styles.yellow);
+        var emitCall = __stack[1].getFileName() == 'events.js' ? __stack[2] : __stack[1];
+        var str = traceFormat(call, styles.red) + 'at ' + traceFormat(emitCall, styles.yellow);
       }
       if(err instanceof Error) {
         str += err.stack + '\n';

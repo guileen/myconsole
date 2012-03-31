@@ -24,6 +24,14 @@ var err = new Error('error from emitter');
 
 emitter.emit('error', err);
 
+// simple callback new Error
+function foo(callback) {
+  var err = new Error('error from somewhere');
+  callback(err);
+}
+
+foo(console.ifError);
+
 console.restore();
 console.log('');
 console.log('restore to origin console');
