@@ -58,7 +58,7 @@ console.log('replaced with myconsole again');
 
 (The MIT License)
 
-Copyright (c) 2012 Guillermo Rauch &lt;guillermo@learnboost.com&gt;
+Copyright (c) 2012 Jason Green &lt;guileen@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
