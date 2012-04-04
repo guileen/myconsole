@@ -102,7 +102,8 @@ exports.__defineGetter__('ifError', ifErrorGetter);
 
 function traceFormat (call, style) {
   var basename = call.getFileName().replace(process.cwd() + '/', '')
-    , str = '[' + basename + ':' + call.getLineNumber() + '] '
+    , date = new Date()
+    , str = util.format('%d-%d-%d %d:%d:%d [%s:%d]:', date.getUTCFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), basename, call.getLineNumber())
 
   if (false === exports.traceColors) {
     return str;
