@@ -3,6 +3,7 @@ var fs = require('fs')
 
 console.log('replace with myconsole');
 console.log('this is log');
+console.log({object: 'this is object'});
 console.info('this is info');
 console.warn('this is warn');
 console.error('this is error');

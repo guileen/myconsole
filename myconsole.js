@@ -35,23 +35,23 @@ var styles = {
 };
 
 exports.log = function() {
-  arguments[0] = traceFormat(__stack[1], styles.grey) + arguments[0];
-  process.stdout.write(util.format.apply(this, arguments) + '\n');
+  var info = traceFormat(__stack[1], styles.grey);
+  process.stdout.write(info + util.format.apply(this, arguments) + '\n');
 }
 
 exports.info = function() {
-  arguments[0] = traceFormat(__stack[1], styles.green) + arguments[0];
-  process.stdout.write(util.format.apply(this, arguments) + '\n');
+  var info = traceFormat(__stack[1], styles.green);
+  process.stdout.write(info + util.format.apply(this, arguments) + '\n');
 }
 
 exports.warn = function() {
-  arguments[0] = traceFormat(__stack[1], styles.yellow) + arguments[0];
-  process.stderr.write(util.format.apply(this, arguments) + '\n');
+  var info = traceFormat(__stack[1], styles.yellow);
+  process.stderr.write(info + util.format.apply(this, arguments) + '\n');
 }
 
 exports.error = function() {
-  arguments[0] = traceFormat(__stack[1], styles.red) + arguments[0];
-  process.stderr.write(util.format.apply(this, arguments) + '\n');
+  var info = traceFormat(__stack[1], styles.red);
+  process.stderr.write(info + util.format.apply(this, arguments) + '\n');
 }
 
 exports.dir = function(obj, level) {
@@ -59,10 +59,11 @@ exports.dir = function(obj, level) {
 }
 
 exports.traceError = function(obj) {
+  var info = traceFormat(__stack[1], styles.red);
   if(obj instanceof Error) {
-    process.stderr.write(traceFormat(__stack[1], styles.red) + obj.stack + '\n');
+    process.stderr.write(info + obj.stack + '\n');
   } else {
-    process.stderr.write(traceFormat(__stack[1], styles.red) + util.inspect(obj, false, null, tty.isatty()) + '\n');
+    process.stderr.write(info + util.inspect(obj, false, null, tty.isatty()) + '\n');
   }
 }
 
