@@ -34,6 +34,8 @@ var styles = {
   'yellow'    : ['\033[33m', '\033[39m']
 };
 
+exports.useColors = tty.isatty();
+
 exports.log = function() {
   var info = traceFormat(__stack[1], styles.grey);
   process.stdout.write(info + util.format.apply(this, arguments) + '\n');
@@ -55,7 +57,7 @@ exports.error = function() {
 }
 
 exports.dir = function(obj, level) {
-  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, level, tty.isatty()) + '\n');
+  process.stdout.write(traceFormat(__stack[1], styles.blue) + util.inspect(obj, false, level, exports.useColors) + '\n');
 }
 
 exports.traceError = function(obj) {
@@ -63,7 +65,7 @@ exports.traceError = function(obj) {
   if(obj instanceof Error) {
     process.stderr.write(info + obj.stack + '\n');
   } else {
-    process.stderr.write(info + util.inspect(obj, false, null, tty.isatty()) + '\n');
+    process.stderr.write(info + util.inspect(obj, false, null, exports.useColors) + '\n');
   }
 }
 
@@ -84,7 +86,7 @@ function ifErrorGetter() {
       if(err instanceof Error) {
         str += err.stack + '\n';
       } else {
-        str += util.inspect(err, false, null, tty.isatty()) + '\n';
+        str += util.inspect(err, false, null, exports.useColors) + '\n';
       }
       process.stderr.write(str);
     }
@@ -108,7 +110,7 @@ function traceFormat (call, style) {
 
   if (false === exports.traceColors) {
     return str;
-  } else if(exports.traceColors === true || tty.isatty()) {
+  } else if(exports.traceColors === true || exports.useColors) {
     return style[0] + str + style[1];
   } else {
     return str;
