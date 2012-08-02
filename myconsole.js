@@ -94,6 +94,7 @@ function ifErrorGetter() {
 }
 
 exports.__defineGetter__('ifError', ifErrorGetter);
+exports.__defineGetter__('logIfError', ifErrorGetter);
 
 /**
  * formatting function.
@@ -132,6 +133,7 @@ exports.replace = function() {
     console.dir = exports.dir
     console.traceError = exports.traceError
     console.__defineGetter__('ifError', ifErrorGetter);
+    console.__defineGetter__('logIfError', ifErrorGetter);
   }
 
   function restore() {
