@@ -14,6 +14,7 @@ console.dir({obj: 'dir obj'})
 
 // this will error
 fs.mkdir('test.js', console.ifError);
+fs.mkdir('test.js', console.logIfError);
 
 // test ifError for EventEmitter
 var EventEmitter = require('events').EventEmitter;
